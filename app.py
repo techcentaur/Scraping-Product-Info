@@ -1,9 +1,7 @@
 from flask import Flask
 from flask import flash, redirect, render_template, request, session, abort
 
-from scraper import Scraper
-from amazon_scraper import AmazonScraper
-
+from scraper import Amazon
 
 app = Flask(__name__)
 
