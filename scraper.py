@@ -1,8 +1,10 @@
+import pprint
 import requests
 from lxml import html  
 from time import sleep
 
 class Amazon:
+    """Amazon scraper"""
     def __init__(self):
         pass
 
@@ -56,5 +58,64 @@ class Amazon:
         return self.amazon_parser(url)
      
 
+class Ebay:
+    """Ebay scraper"""
+    def __init__(self):
+        pass
+
+    def ebay_parser(self, link):
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Safari/537.36'}
+        page = requests.get(link, headers=headers)
+        try:
+            doc = html.fromstring(page.content)
+            TITLE = '//h1[@id="itemTitle"]//text()'
+            CAT = '//td[@id="vi-VR-brumb-lnkLst"]//text()'
+            SHIPPING_COST = '//span[@id="fshippingCost"]//text()'
+            SHIPPING_SVC = '//span[@id="fShippingSvc"]//text()'
+            PAY = '//div[@id="payDet1"]//text()'
+            SOLD = '//span[@class="w2b-sgl"]//text()'
+
+            RAW_TITLE = doc.xpath(TITLE)
+            RAW_CAT = doc.xpath(CAT)
+            RAW_SHIP_COST = doc.xpath(SHIPPING_COST)
+            RAW_SHIP_SVC = doc.xpath(SHIPPING_SVC)
+            RAW_PAY = doc.xpath(PAY)
+            RAW_SOLD = doc.xpath(SOLD)
+
+            _title = RAW_TITLE[1]
+            _cat = "".join(RAW_CAT)
+            for i in ['\n', '\t', '\xa0']:
+                _cat = _cat.replace(i, '')
+
+
+            _ship_cost = ' '.join(''.join(RAW_SHIP_COST).split()) if RAW_SHIP_COST else None
+            _ship_svc = ' '.join(''.join(RAW_SHIP_SVC).split()) if RAW_SHIP_SVC else None
+            
+            _paystr = "".join(RAW_PAY)
+            for i in ['\n', '\t', '\xa0']:
+                _paystr = _paystr.replace(i, '')
+
+            _sold = " | ".join(RAW_SOLD)
+
+            data = {
+            'title': _title,
+            'category': _cat,
+            'ship':{
+                    'cost': _ship_cost,
+                    'service': _ship_svc
+                    },
+            'payment': _paystr,
+            'sold': _sold
+            }
+
+            return data
+
+        except Exception as e:
+            print(e)
+        return True
+
+
 if __name__=="__main__":
     a = Amazon().amazon_parser("https://www.amazon.in/Esquire-Spin-mop-2-Refills/dp/B071JWBFDT/ref=lp_15185218031_1_2?s=home-improvement&ie=UTF8&qid=1532165388&sr=1-2")
+    e = Ebay().ebay_parser("https://www.ebay.in/itm/portable-rugby-wireless-bluetooth-mini-stereo-speaker-fm-radio-usb-microsd/292105966607?hash=item4402df540f")
+
