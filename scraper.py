@@ -2,6 +2,8 @@ import pprint
 import requests
 from lxml import html  
 from time import sleep
+from collections import OrderedDict
+
 
 class Amazon:
     """Amazon scraper"""
@@ -37,11 +39,12 @@ class Amazon:
             if not ORIGINAL_PRICE:
                 ORIGINAL_PRICE = SALE_PRICE
 
+            data = OrderedDict()
             data = {
                     'NAME': NAME,
-                    'SALE_PRICE': SALE_PRICE,
+                    'SALE PRICE': SALE_PRICE,
                     'CATEGORY': CATEGORY,
-                    'ORIGINAL_PRICE': ORIGINAL_PRICE,
+                    'ORIGINAL PRICE': ORIGINAL_PRICE,
                     'AVAILABILITY': AVAILABILITY,
                     'URL': url,
                     }
@@ -87,7 +90,6 @@ class Ebay:
             for i in ['\n', '\t', '\xa0']:
                 _cat = _cat.replace(i, '')
 
-
             _ship_cost = ' '.join(''.join(RAW_SHIP_COST).split()) if RAW_SHIP_COST else None
             _ship_svc = ' '.join(''.join(RAW_SHIP_SVC).split()) if RAW_SHIP_SVC else None
             
@@ -97,15 +99,14 @@ class Ebay:
 
             _sold = " | ".join(RAW_SOLD)
 
+            data = OrderedDict()
             data = {
-            'title': _title,
-            'category': _cat,
-            'ship':{
-                    'cost': _ship_cost,
-                    'service': _ship_svc
-                    },
-            'payment': _paystr,
-            'sold': _sold
+            'TITLE': _title,
+            'CATEGORY': _cat,
+            'SHIPPING COST': _ship_cost,
+            'SHIPPING SERVICE': _ship_svc,
+            'PAYMENT': _paystr,
+            'SOLD DETAILS': _sold
             }
 
             return data
