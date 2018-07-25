@@ -1,9 +1,9 @@
+import re
 import pprint
 import requests
 from lxml import html  
 from time import sleep
 from collections import OrderedDict
-
 
 class Amazon:
     """Amazon scraper"""
@@ -23,6 +23,10 @@ class Amazon:
             XPATH_CATEGORY = '//a[@class="a-link-normal a-color-tertiary"]//text()'
             XPATH_AVAILABILITY = '//div[@id="availability"]//text()'
             XPATH_ETA = '//div[@id="ddmDeliveryMessage"]//text()'
+            buyop = '//div[@class="a-text-center a-spacing-mini"]//text()'
+            delop = '//div[@id="contextualIngressPt"]//text()'
+            prodinfo = '//div[@class="content"]//text()'
+
 
             RAW_NAME = doc.xpath(XPATH_NAME)
             RAW_SALE_PRICE = doc.xpath(XPATH_SALE_PRICE)
@@ -30,6 +34,33 @@ class Amazon:
             RAW_ORIGINAL_PRICE = doc.xpath(XPATH_ORIGINAL_PRICE)
             RAW_AVAILABILITY = doc.xpath(XPATH_AVAILABILITY)
             RAW_ETA = doc.xpath(XPATH_ETA)
+
+            try:
+                buyopval = doc.xpath(buyop)
+                buyopval = " ".join(buyopval)
+                buyopval = buyopval.replace('\xa0', '')
+            except Exception as e:
+                buyopval = None
+
+            try:
+                delopval = doc.xpath(delop)
+                _del = ' '.join(''.join(delopval).split()) if delopval else None
+            except Exception as e:
+                _del = None
+
+            ll = []
+            try:
+                raw_prodinfo = doc.xpath(prodinfo)
+                l = raw_prodinfo
+                l = ' '.join(''.join(l).split()) if l else None
+                l = re.sub(r'\{[^}]*\}', '', l)
+                l = l.split()
+                for i in l:
+                    if not i.startswith('.'):
+                        ll.append(i)
+                ll = " ".join(ll)
+            except Exception as e:
+                ll = "None available"
 
             NAME = ' '.join(''.join(RAW_NAME).split()) if RAW_NAME else None
             SALE_PRICE = ' '.join(''.join(RAW_SALE_PRICE).split()).strip() if RAW_SALE_PRICE else None
@@ -49,13 +80,14 @@ class Amazon:
                     'ORIGINAL PRICE': ORIGINAL_PRICE,
                     'AVAILABILITY': AVAILABILITY,
                     'URL': url,
-                    'ETA': ETA
+                    'ETA': ETA,
+                    'BUY OPTIONS': buyopval + " | " + _del,
+                    'Product Info': ll
                     }
  
             return data
         except Exception as e:
-            print(e)
-        return True
+            return {"Exception": e}
      
 
     # If ASIN given (Amazon specific)
