@@ -108,8 +108,8 @@ class Ebay:
             doc = html.fromstring(page.content)
             TITLE = '//h1[@id="itemTitle"]//text()'
             CAT = '//td[@id="vi-VR-brumb-lnkLst"]//text()'
-            SHIPPING_COST = '//span[@id="fshippingCost"]//text()'
-            SHIPPING_SVC = '//span[@id="fShippingSvc"]//text()'
+            SHIPPING_COST = '//span[@id="prcIsum"]//text()'
+            SHIPPING_SVC = '//div[@class="sh-del-frst"]//text()'
             PAY = '//div[@id="payDet1"]//text()'
             SOLD = '//span[@class="w2b-sgl"]//text()'
 
@@ -117,6 +117,7 @@ class Ebay:
             RAW_CAT = doc.xpath(CAT)
             RAW_SHIP_COST = doc.xpath(SHIPPING_COST)
             RAW_SHIP_SVC = doc.xpath(SHIPPING_SVC)
+
             RAW_PAY = doc.xpath(PAY)
             RAW_SOLD = doc.xpath(SOLD)
 
@@ -127,6 +128,10 @@ class Ebay:
 
             _ship_cost = ' '.join(''.join(RAW_SHIP_COST).split()) if RAW_SHIP_COST else None
             _ship_svc = ' '.join(''.join(RAW_SHIP_SVC).split()) if RAW_SHIP_SVC else None
+            if _ship_svc is None:
+                SHIPPING_SVC = '//span[@class="vi-acc-del-range"]//text()'
+                RAW_SHIP_SVC = doc.xpath(SHIPPING_SVC)
+                _ship_svc = RAW_SHIP_SVC[0]
             
             _paystr = "".join(RAW_PAY)
             for i in ['\n', '\t', '\xa0']:
@@ -143,7 +148,6 @@ class Ebay:
             'PAYMENT': _paystr,
             'SOLD DETAILS': _sold
             }
-
             return data
 
         except Exception as e:
@@ -154,4 +158,3 @@ class Ebay:
 if __name__=="__main__":
     a = Amazon().amazon_parser("https://www.amazon.in/Esquire-Spin-mop-2-Refills/dp/B071JWBFDT/ref=lp_15185218031_1_2?s=home-improvement&ie=UTF8&qid=1532165388&sr=1-2")
     e = Ebay().ebay_parser("https://www.ebay.in/itm/portable-rugby-wireless-bluetooth-mini-stereo-speaker-fm-radio-usb-microsd/292105966607?hash=item4402df540f")
-
