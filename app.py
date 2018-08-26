@@ -4,7 +4,7 @@ from flask import redirect
 from flask import render_template
 from flask import request, session, abort
 
-from scraper import Amazon, Ebay
+from scraper import Amazon, eBay
 
 app = Flask(__name__)
 
@@ -20,9 +20,9 @@ def info():
         raise ValueError
 
     if link.find("amazon") != -1:
-        data = Amazon().amazon_parser(link)
+        data = Amazon().Amazon_parser(link)
     elif link.find("ebay") != -1:
-        data = Ebay().ebay_parser(link)
+        data = eBay().eBay_parser(link)
 
     if data:
         pass

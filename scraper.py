@@ -10,7 +10,7 @@ class Amazon:
     def __init__(self):
         pass
 
-    def amazon_parser(self, url):
+    def Amazon_parser(self, url):
 
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Safari/537.36'}
         page = requests.get(url, headers=headers)
@@ -96,12 +96,12 @@ class Amazon:
         return self.amazon_parser(url)
      
 
-class Ebay:
+class eBay:
     """Ebay scraper"""
     def __init__(self):
         pass
 
-    def ebay_parser(self, link):
+    def eBay_parser(self, link):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Safari/537.36'}
         page = requests.get(link, headers=headers)
         try:
@@ -156,5 +156,6 @@ class Ebay:
 
 
 if __name__=="__main__":
-    a = Amazon().amazon_parser("https://www.amazon.in/Esquire-Spin-mop-2-Refills/dp/B071JWBFDT/ref=lp_15185218031_1_2?s=home-improvement&ie=UTF8&qid=1532165388&sr=1-2")
-    e = Ebay().ebay_parser("https://www.ebay.in/itm/portable-rugby-wireless-bluetooth-mini-stereo-speaker-fm-radio-usb-microsd/292105966607?hash=item4402df540f")
+    a = Amazon().Amazon_parser("https://www.amazon.in/Esquire-Spin-mop-2-Refills/dp/B071JWBFDT/ref=lp_15185218031_1_2?s=home-improvement&ie=UTF8&qid=1532165388&sr=1-2")
+    e = eBay().eBay_parser("https://www.ebay.in/itm/portable-rugby-wireless-bluetooth-mini-stereo-speaker-fm-radio-usb-microsd/292105966607?hash=item4402df540f")
+    
