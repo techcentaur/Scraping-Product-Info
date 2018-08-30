@@ -133,6 +133,11 @@ class eBay:
                 RAW_SHIP_SVC = doc.xpath(SHIPPING_SVC)
                 _ship_svc = RAW_SHIP_SVC[0]
             
+            if _ship_cost is None:
+                SHIPPING_COST = '//span[@id="mm-saleDscPrc"]//text()'
+                RAW_SHIP_COST = doc.xpath(SHIPPING_COST)
+                _ship_cost = ' '.join(''.join(RAW_SHIP_COST).split()) if RAW_SHIP_COST else None
+
             _paystr = "".join(RAW_PAY)
             for i in ['\n', '\t', '\xa0']:
                 _paystr = _paystr.replace(i, '')
