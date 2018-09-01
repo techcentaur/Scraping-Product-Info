@@ -60,7 +60,6 @@ class Amazon:
                 if not i.startswith('.'):
                     ll.append(i)
             ll = " ".join(ll)
-            print(l)
         except Exception as e:
             ll = "None available"
 
@@ -73,6 +72,15 @@ class Amazon:
 
         if not ORIGINAL_PRICE:
             ORIGINAL_PRICE = SALE_PRICE
+
+        if AVAILABILITY is None:
+            iskindle = '//span[@class="a-button-inner"]//text()'
+            avail = doc.xpath(iskindle)
+            avail = ''.join(avail).strip() if avail else None
+            if avail.find("Kindle"):
+                AVAILABILITY = "Kindle-Ebook Available"
+            ETA = "Online process"
+
 
         if buyopval is None:
             buyopval = ' '
@@ -111,7 +119,6 @@ class eBay:
 
     def eBay_parser(self, link):
         linkparts = link.split('/')
-        print(linkparts)
         if linkparts[3] == 'p':
             resp = requests.get(link)
             docresp = html.fromstring(resp.content)
@@ -186,6 +193,4 @@ class eBay:
         return True
 
 if __name__=="__main__":
-    link = input()
-    e = eBay().eBay_parser("https://www.ebay.in/itm/portable-rugby-wireless-bluetooth-mini-stereo-speaker-fm-radio-usb-microsd/292105966607?hash=item4402df540f")
-    print(e)    
+    pass 
