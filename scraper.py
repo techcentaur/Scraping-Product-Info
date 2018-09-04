@@ -87,6 +87,10 @@ class Amazon:
         if _del is None:
             _del = ' '
 
+        if SALE_PRICE is None:
+            sale__price = (doc.xpath('//span[@id="price_inside_buybox"]//text()'))
+            SALE_PRICE = ' '.join(''.join(sale__price).split()).strip() if sale__price else None
+
         data = OrderedDict()
         data = {
                 'NAME': NAME,
@@ -96,10 +100,14 @@ class Amazon:
                 'AVAILABILITY': AVAILABILITY,
                 'URL': url,
                 'ETA': ETA,
-                'BUY OPTIONS': buyopval + " | " + _del,
                 'Additional Product Info': ll
                 }
-
+        if "cannot" in ETA.split():
+            print("okay")
+            pass
+        else:
+            data['BUY OPTIONS'] = buyopval + " | " + _del
+        
         # print(data)
         return data
         # except Exception as e:
@@ -154,6 +162,9 @@ class eBay:
             RAW_PAY = doc.xpath(PAY)
             RAW_SOLD = doc.xpath(SOLD)
 
+            feedback = doc.xpath('//div[@id="si-fb"]//text()')
+            feedback = " ".join(feedback)
+
             _title = RAW_TITLE[1]
             _cat = "".join(RAW_CAT)
             for i in ['\n', '\t', '\xa0']:
@@ -181,11 +192,15 @@ class eBay:
             data = {
             'TITLE': _title,
             'CATEGORY': _cat,
-            'SHIPPING COST': _ship_cost,
+            'COST': _ship_cost,
             'SHIPPING SERVICE': _ship_svc,
             'PAYMENT': _paystr,
-            'SOLD DETAILS': _sold
+            'SOLD DETAILS': _sold,
             }
+
+            if feedback != None:
+                data['FEEDBACK'] = feedback
+
             return data
 
         except Exception as e:
